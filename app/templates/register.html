@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block head %}
+	{{super()}}
+{% endblock %}
+{% block body %}
+	{{super()}}
+	<div class="middle_content">
+		<form action="/register" method="POST">
+			{{ form.csrf_token }}
+			{{form.email.label}} {{form.email(class='form-control')}}
+			{{form.password.label}} {{form.password(class='form-control')}}
+			{{form.submit(class='btn btn-primary',value='Register')}}
+		</form>
+		<p class='error'>{{message}}</p>
+	</div>
+{% endblock %}

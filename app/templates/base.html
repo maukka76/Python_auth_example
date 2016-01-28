@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+	<head>
+		{% block head %}
+		<link href="/static/css/style.css" type="text/css" rel="stylesheet"/>
+		<title>{% block title %}{% endblock %} -Opiframe</title>
+		{% endblock %}
+	</head>
+	<body>
+		{% include "navbar.html" %}
+		{% block body %}
+			{% for message in get_flashed_messages() %}
+				<div class="alert alert-warning">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+					{{message}}
+				</div>
+			{% endfor %}
+		{% endblock %}
+	</body>
+</html>
