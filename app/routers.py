@@ -50,6 +50,7 @@ def register():
 @app.route('/data')
 @login_required
 def secret():
+	print('ID:' + current_user.id)
 	return render_template('secret_data.html')
 
 @app.route('/logout')

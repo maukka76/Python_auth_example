@@ -7,3 +7,10 @@ class User(db.Model, UserMixin):
 	def __init__(self, username, password):
 		self.username = username
 		self.password = password
+
+class Friends(db.Model):
+	id = db.Column(db.Integer, primary_key = True)
+	name = db.Column(db.String)
+	address = db.Column(db.String)
+	age = db.Column(db.Integer)
+	user_id= db.Column(db.Integer,db.ForeignKey('user.id'))
