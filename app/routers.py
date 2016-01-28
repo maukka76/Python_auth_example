@@ -1,10 +1,10 @@
 from app import app
 from flask import render_template,request,abort,flash,redirect,url_for
-from app.forms import LoginForm
-from app.db_models import User
+from app.forms import LoginForm,FriendForm
+from app.db_models import User,Friends
 from app import db
 from app import login_manager
-from flask.ext.login import login_user,login_required,logout_user
+from flask.ext.login import login_user,login_required,logout_user,current_user
 
 @app.route('/',methods=['GET','POST'])
 def root():
@@ -50,8 +50,28 @@ def register():
 @app.route('/data')
 @login_required
 def secret():
-	print('ID:' + current_user.id)
-	return render_template('secret_data.html')
+	user = User.query.get(current_user.id)
+	friends = User.query.join(Friends,user.id==Friends.user_id).add_columns(User.id,Friends.name,Friends.address,Friends.age).filter(User.id==user.id).all()
+	print(len(friends))
+	temp = len(friends)
+	return render_template('secret_data.html',fr=friends,length=temp)
+
+@app.route('/friends',methods=['GET','POST'])
+@login_required
+def addFriend():
+	fForm = FriendForm()
+	if request.method == 'GET':
+		return render_template('friends.html',form=fForm)
+	else:
+		if fForm.validate_on_submit():
+			temp = Friends(fForm.name.data,fForm.address.data,fForm.age.data,current_user.id)
+			db.session.add(temp)
+			db.session.commit()
+			return redirect('/data')
+		else:
+			flash('Give correct information to fields!')
+			return render_template('friends.html',form=fForm)
+		
 
 @app.route('/logout')
 def logout():
