@@ -1,13 +1,20 @@
 from flask.ext.login import UserMixin
+#use: pip install flask-bcrypt
+from flask.ext.bcrypt import generate_password_hash
 from app import db
+
 class User(db.Model, UserMixin):
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String,unique=True)
 	password = db.Column(db.String)
 	friends = db.relationship('Friends',backref="user",primaryjoin='User.id==Friends.user_id',lazy='dynamic')
-	def __init__(self, username, password):
+	
+	
+	def __init__(self, username, passw):
 		self.username = username
-		self.password = password
+		self.password = generate_password_hash(passw)
+
+
 
 class Friends(db.Model):
 	id = db.Column(db.Integer, primary_key = True)

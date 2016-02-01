@@ -3,6 +3,7 @@ from flask import render_template,request,abort,flash,redirect,url_for
 from app.forms import LoginForm,FriendForm,UpdateForm
 from app.db_models import User,Friends
 from app import db
+from flask.ext.bcrypt import check_password_hash
 from app import login_manager
 from flask.ext.login import login_user,login_required,logout_user,current_user
 
@@ -12,8 +13,8 @@ def root():
 	if request.method == 'GET':
 		return render_template('index.html',form=login_form)
 	if login_form.validate_on_submit():
-		user = User.query.filter_by(username=login_form.email.data).filter_by(password=login_form.password.data)
-		if user.count() == 1:
+		user = User.query.filter_by(username=login_form.email.data)
+		if user.count() == 1 and check_password_hash(user[0].password,login_form.password.data):
 			login_user(user.one())
 			return redirect('/data')
 		else:
