@@ -3,6 +3,11 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.login import LoginManager
 from flask.ext.sqlalchemy import SQLAlchemy
 
+#For using this you need to install next dependencies
+#pip install six cryptography
+#pip install pyopenssl
+from OpenSSL import SSL
+
 app = Flask(__name__)
 app.config.from_object('config')
 bootstrap = Bootstrap(app)
