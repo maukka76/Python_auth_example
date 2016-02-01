@@ -52,6 +52,8 @@ def register():
 @login_required
 def secret():
 	user = User.query.get(current_user.id)
+	#You can use also our backref to get the friends for this user....
+	print(user.friends.all())
 	friends = User.query.join(Friends,user.id==Friends.user_id).add_columns(User.id,Friends.id,Friends.name,Friends.address,Friends.age).filter(User.id==user.id).all()
 	temp = len(friends)
 	return render_template('secret_data.html',fr=friends,length=temp)
