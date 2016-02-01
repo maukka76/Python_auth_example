@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template,request,abort,flash,redirect,url_for
-from app.forms import LoginForm,FriendForm
+from app.forms import LoginForm,FriendForm,UpdateForm
 from app.db_models import User,Friends
 from app import db
 from app import login_manager
@@ -51,8 +51,7 @@ def register():
 @login_required
 def secret():
 	user = User.query.get(current_user.id)
-	friends = User.query.join(Friends,user.id==Friends.user_id).add_columns(User.id,Friends.name,Friends.address,Friends.age).filter(User.id==user.id).all()
-	print(len(friends))
+	friends = User.query.join(Friends,user.id==Friends.user_id).add_columns(User.id,Friends.id,Friends.name,Friends.address,Friends.age).filter(User.id==user.id).all()
 	temp = len(friends)
 	return render_template('secret_data.html',fr=friends,length=temp)
 
@@ -78,6 +77,39 @@ def logout():
     logout_user()
     return redirect('/')
 
+@app.route('/delete/<int:id>')
+def deleteFriend(id):
+	friend = Friends.query.get(id)
+	db.session.delete(friend)
+	db.session.commit()
+	flash('Friend deleted succcessfully.')
+	return redirect('/data')
+
+@app.route('/update/<int:id>')
+def updateFriendView(id):
+	friend = Friends.query.get(id)
+	form = UpdateForm();
+	form.hidden.data = friend.id
+	form.name.data = friend.name
+	form.address.data = friend.address
+	form.age.data = friend.age
+	return render_template('update.html',form=form)
+
+@app.route('/update',methods=['POST'])
+def updateFriend():
+	form = UpdateForm();
+	friend = Friends.query.get(form.hidden.data)
+	if form.validate_on_submit():
+		form.hidden.data = friend.id
+		friend.name = form.name.data
+		friend.address = form.address.data
+		friend.age = form.age.data
+		db.session.commit()
+		return redirect('/data')
+	else:
+		flash('Fill up all the asked infromation!')
+		return render_template('update.html',form=form)
+	
 @login_manager.user_loader
 def user_loader(user_id):
     user = User.query.filter_by(id=user_id)

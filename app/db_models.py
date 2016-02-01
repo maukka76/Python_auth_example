@@ -2,7 +2,7 @@ from flask.ext.login import UserMixin
 from app import db
 class User(db.Model, UserMixin):
 	id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.String)
+	username = db.Column(db.String,unique=True)
 	password = db.Column(db.String)
 	friends = db.relationship('Friends',backref="user",primaryjoin='User.id==Friends.user_id',lazy='dynamic')
 	def __init__(self, username, password):
